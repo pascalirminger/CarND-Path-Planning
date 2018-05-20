@@ -32,7 +32,6 @@ A new file was added to the project: [```src/spline.h```](./src/spline.h). It is
 | Car does not have collisions                                          | YES    |
 | The car stays in its lane, except for the time between changing lanes | YES    |
 | The car is able to change lanes                                       | YES    |
-|                                                                       |        |
 
 ## Reflection
 
