@@ -202,7 +202,7 @@ int main() {
 	int lane = 1;
 
 	// Have a reference velocity to target
-	double ref_vel = 49.5; // mph
+	double ref_vel = 0.0; // mph
 
   h.onMessage([&ref_vel, &map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy, &lane](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -242,6 +242,51 @@ int main() {
 
 					// Get previous path size
 					int prev_size = previous_path_x.size();
+
+
+					if (prev_size > 0)
+					{
+						car_s = end_path_s;
+					}
+
+					bool too_close = false;
+
+					// Find ref_v to use
+					for (int i = 0; i < sensor_fusion.size(); i++)
+					{
+						// Check the lane the car is in
+						float d = sensor_fusion[i][6];
+						if (d < (2 + 4 * lane + 2) && d > (2 + 4 * lane - 2))
+						{
+							// Car is in my lane
+							double vx = sensor_fusion[i][3];
+							double vy = sensor_fusion[i][4];
+							double check_speed = sqrt(vx * vx + vy * vy); // Calculate velocity magnitude
+							double check_car_s = sensor_fusion[i][5];
+
+							check_car_s += (double)prev_size * .02 * check_speed; // If using previous points, we can project s value
+
+							// Check s values greater than mine and s gap
+							if (check_car_s > car_s && (check_car_s - car_s) < 30)
+							{
+								// Car is too close
+								// Do some logic here:
+								// - lower reference velocity so we don't crash into the car infront of us
+								// - could also flag to try to change lanes
+								//ref_vel = 29.5; // mph
+								too_close = true;
+							}
+						}
+					}
+
+					if (too_close)
+					{
+						ref_vel -= .224;
+					}
+					else if (ref_vel < 49.5)
+					{
+						ref_vel += .224;
+					}
 
 
 
@@ -303,7 +348,7 @@ int main() {
 
 					for (int i = 0; i < ptsx.size(); i++)
 					{
-						// Shift car reference angle to 0 degrees
+						// Shift and rotate car reference angle to 0 degrees
 						double shift_x = ptsx[i] - ref_x;
 						double shift_y = ptsy[i] - ref_y;
 
@@ -344,7 +389,7 @@ int main() {
 
 						x_add_on = x_point;
 
-						// Rotate (shift) back to normal after rotating it earlier
+						// Rotate and shift back to normal after rotating it earlier
 						double x_ref = x_point;
 						double y_ref = y_point;
 
