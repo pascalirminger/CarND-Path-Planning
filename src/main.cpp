@@ -249,45 +249,94 @@ int main() {
 						car_s = end_path_s;
 					}
 
-					bool too_close = false;
+					bool car_ahead = false;
+					bool car_left = false;
+					bool car_right = false;
 
 					// Find ref_v to use
 					for (int i = 0; i < sensor_fusion.size(); i++)
 					{
 						// Check the lane the car is in
-						float d = sensor_fusion[i][6];
-						if (d < (2 + 4 * lane + 2) && d > (2 + 4 * lane - 2))
+						const float other_d = sensor_fusion[i][6];
+						int other_lane = -1;
+						if (other_d > 0 && other_d < 4)
 						{
-							// Car is in my lane
-							double vx = sensor_fusion[i][3];
-							double vy = sensor_fusion[i][4];
-							double check_speed = sqrt(vx * vx + vy * vy); // Calculate velocity magnitude
-							double check_car_s = sensor_fusion[i][5];
+							other_lane = 0;
+						}
+						else if (other_d > 4 && other_d < 8)
+						{
+							other_lane = 1;
+						}
+						else if (other_d > 8 && other_d < 12)
+						{
+							other_lane = 2;
+						}
+						if (other_lane >= 0 && other_lane <= 2)
+						{
+							// Find car speed
+							const double other_vx = sensor_fusion[i][3];
+							const double other_vy = sensor_fusion[i][4];
+							const double other_speed = sqrt(other_vx * other_vx + other_vy * other_vy); // Calculate velocity magnitude
+							double other_car_s = sensor_fusion[i][5];
 
-							check_car_s += (double)prev_size * .02 * check_speed; // If using previous points, we can project s value
+							// Predict s value using previous points
+							other_car_s += (double)prev_size * .02 * other_speed;
 
-							// Check s values greater than mine and s gap
-							if (check_car_s > car_s && (check_car_s - car_s) < 30)
+							switch (other_lane - lane)
 							{
-								// Car is too close
-								// Do some logic here:
-								// - lower reference velocity so we don't crash into the car infront of us
-								// - could also flag to try to change lanes
-								//ref_vel = 29.5; // mph
-								too_close = true;
+								case -1:
+									// Car is left of us
+									car_left |= other_car_s > car_s - 30 && other_car_s < car_s + 30;
+									break;
+								case 0:
+									// Car is in our lane
+									car_ahead |= other_car_s > car_s && other_car_s < car_s + 30;
+									break;
+								case 1:
+									// Car is right of us
+									car_right |= other_car_s > car_s - 30 && other_car_s < car_s + 30;
+									break;
 							}
 						}
 					}
 
-					if (too_close)
-					{
-						ref_vel -= .224;
-					}
-					else if (ref_vel < 49.5)
-					{
-						ref_vel += .224;
-					}
+					const double MAX_VEL = 49.5;
+					const double DELTA_VEL = .224;
 
+					if (car_ahead)
+					{
+						// Car ahead
+						if (!car_left && lane > 0)
+						{
+							// Another lane but no car on the left
+							lane--; // Lane change left
+						}
+						else if (!car_right && lane < 2)
+						{
+							// Another lane but no car on the right
+							lane++; // Lane change right
+						}
+						else
+						{
+							// No lane change possible -> Decrease speed
+							ref_vel -= DELTA_VEL;
+						}
+					}
+					else
+					{
+						if (lane != 1) // If we are not on the center lane
+						{
+							// Try to get onto the center lane
+							if ((!car_left && lane == 2) || (!car_right && lane == 0))
+							{
+								lane = 1; // Back to center
+							}
+						}
+						if (ref_vel < MAX_VEL)
+						{
+							ref_vel += DELTA_VEL;
+						}
+					}
 
 
 					// Create a list of widely spaced (x,y) waypoints, evenly spaced at 30m.
