@@ -38,32 +38,29 @@ double distance(double x1, double y1, double x2, double y2)
 {
 	return sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
 }
+
 int ClosestWaypoint(double x, double y, const vector<double> &maps_x, const vector<double> &maps_y)
 {
-
 	double closestLen = 100000; //large number
 	int closestWaypoint = 0;
 
-	for(int i = 0; i < maps_x.size(); i++)
+	for (int i = 0; i < maps_x.size(); i++)
 	{
 		double map_x = maps_x[i];
 		double map_y = maps_y[i];
 		double dist = distance(x,y,map_x,map_y);
-		if(dist < closestLen)
+		if (dist < closestLen)
 		{
 			closestLen = dist;
 			closestWaypoint = i;
 		}
-
 	}
 
 	return closestWaypoint;
-
 }
 
 int NextWaypoint(double x, double y, double theta, const vector<double> &maps_x, const vector<double> &maps_y)
 {
-
 	int closestWaypoint = ClosestWaypoint(x,y,maps_x,maps_y);
 
 	double map_x = maps_x[closestWaypoint];
@@ -74,13 +71,13 @@ int NextWaypoint(double x, double y, double theta, const vector<double> &maps_x,
 	double angle = fabs(theta-heading);
   angle = min(2*pi() - angle, angle);
 
-  if(angle > pi()/4)
+  if (angle > pi()/4)
   {
     closestWaypoint++;
-  if (closestWaypoint == maps_x.size())
-  {
-    closestWaypoint = 0;
-  }
+		if (closestWaypoint == maps_x.size())
+		{
+			closestWaypoint = 0;
+		}
   }
 
   return closestWaypoint;
@@ -93,7 +90,7 @@ vector<double> getFrenet(double x, double y, double theta, const vector<double> 
 
 	int prev_wp;
 	prev_wp = next_wp-1;
-	if(next_wp == 0)
+	if (next_wp == 0)
 	{
 		prev_wp  = maps_x.size()-1;
 	}
@@ -117,14 +114,14 @@ vector<double> getFrenet(double x, double y, double theta, const vector<double> 
 	double centerToPos = distance(center_x,center_y,x_x,x_y);
 	double centerToRef = distance(center_x,center_y,proj_x,proj_y);
 
-	if(centerToPos <= centerToRef)
+	if (centerToPos <= centerToRef)
 	{
 		frenet_d *= -1;
 	}
 
 	// calculate s value
 	double frenet_s = 0;
-	for(int i = 0; i < prev_wp; i++)
+	for (int i = 0; i < prev_wp; i++)
 	{
 		frenet_s += distance(maps_x[i],maps_y[i],maps_x[i+1],maps_y[i+1]);
 	}
@@ -140,24 +137,24 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s, const vec
 {
 	int prev_wp = -1;
 
-	while(s > maps_s[prev_wp+1] && (prev_wp < (int)(maps_s.size()-1) ))
+	while (s > maps_s[prev_wp+1] && (prev_wp < (int)(maps_s.size()-1) ))
 	{
 		prev_wp++;
 	}
 
-	int wp2 = (prev_wp+1)%maps_x.size();
+	int wp2 = (prev_wp+1) % maps_x.size();
 
-	double heading = atan2((maps_y[wp2]-maps_y[prev_wp]),(maps_x[wp2]-maps_x[prev_wp]));
+	double heading = atan2((maps_y[wp2]-maps_y[prev_wp]), (maps_x[wp2]-maps_x[prev_wp]));
 	// the x,y,s along the segment
 	double seg_s = (s-maps_s[prev_wp]);
 
-	double seg_x = maps_x[prev_wp]+seg_s*cos(heading);
-	double seg_y = maps_y[prev_wp]+seg_s*sin(heading);
+	double seg_x = maps_x[prev_wp] + seg_s * cos(heading);
+	double seg_y = maps_y[prev_wp] + seg_s * sin(heading);
 
-	double perp_heading = heading-pi()/2;
+	double perp_heading = heading - pi() / 2;
 
-	double x = seg_x + d*cos(perp_heading);
-	double y = seg_y + d*sin(perp_heading);
+	double x = seg_x + d * cos(perp_heading);
+	double y = seg_y + d * sin(perp_heading);
 
 	return {x,y};
 
@@ -200,7 +197,7 @@ int main() {
   	map_waypoints_dy.push_back(d_y);
   }
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  h.onMessage([&map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -264,8 +261,7 @@ int main() {
   // We don't need this since we're not using HTTP but if it's removed the
   // program
   // doesn't compile :-(
-  h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data,
-                     size_t, size_t) {
+  h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t) {
     const std::string s = "<h1>Hello world!</h1>";
     if (req.getUrl().valueLength == 1) {
       res->end(s.data(), s.length());
@@ -279,8 +275,7 @@ int main() {
     std::cout << "Connected!!!" << std::endl;
   });
 
-  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code,
-                         char *message, size_t length) {
+  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code, char *message, size_t length) {
     ws.close();
     std::cout << "Disconnected" << std::endl;
   });
