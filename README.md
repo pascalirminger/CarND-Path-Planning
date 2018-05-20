@@ -2,6 +2,9 @@
 
 Udacity Self-Driving Car Nanodegree - Term 3, Project 1
 
+[//]: # (Image References)
+[5mi]: ./5mi.png "5 mi"
+
 # [Rubric](https://review.udacity.com/#!/rubrics/1020/view) points
 
 ## Compilation
@@ -19,6 +22,8 @@ A new file was added to the project: [```src/spline.h```](./src/spline.h). It is
 ### The car is able to drive at least 4.32 miles without incident
 
 [todo]
+
+![5 mi][5mi]
 
 | Additional requirements                                               | Status |
 | --------------------------------------------------------------------- |:------:|
