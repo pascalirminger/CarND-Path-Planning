@@ -35,6 +35,32 @@ A new file was added to the project: [```src/spline.h```](./src/spline.h). It is
 
 ## Reflection
 
-### There is a reflection on how to generate paths
+Based on the provided seed project, the path planning algorithm sits in [```src/main.cpp```](./src/main.cpp). The code can be separated in five different segments:
 
-Based on the provided seed project, the path planning algorithm sits in [```src/main.cpp```](./src/main.cpp).
+|    | Code segment                                 | Code lines                          |
+| -- | -------------------------------------------- | ----------------------------------- |
+| 1. | Determine main car parameters                | [234-258](./src/main.cpp#L234-L258) |
+| 2. | Generate predictions from sensor fusion data | [264-313](./src/main.cpp#L264-L313) |
+| 3. | Determine best trajectory                    | [319-355](./src/main.cpp#L319-L355) |
+| 4. | Generate new path                            | [361-472](./src/main.cpp#L361-L472) |
+| 5. | Send new path to the simulator               | [478-485](./src/main.cpp#L478-L485) |
+
+The segments 1 and 5 basically were provided by the seed code. Therefore, only the three segments in between are described in detail below.
+
+### Generate predictions from sensor fusion data
+
+This code segment deals with sensor fusion data. It intents to scan the environment for other vehicles. In particular, it's up to answer the following questions:
+
+- Is there a car in front of us blocking the traffic?
+- Is there a car on the left of us making a lane change unsafe?
+- Is there a car on the right of us making a lane change unsafe?
+
+The code segment answers these question by iterating through all other vehicles that have been recognized with sensor fusion.
+
+### Determine best trajectory
+
+
+
+### Generate new path
+
+
