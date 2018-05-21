@@ -28,7 +28,7 @@ The car has managed to drive incident-free over 4.32 miles multiple times.
 ![5 miles][5mi]
 
 | Additional requirements                                               | Status |
-| --------------------------------------------------------------------- |:------:|
+|:----------------------------------------------------------------------|:------:|
 | The car drives according to the speed limit                           | YES    |
 | Max acceleration and jerk are not exceeded                            | YES    |
 | Car does not have collisions                                          | YES    |
