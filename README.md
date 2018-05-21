@@ -38,7 +38,7 @@ A new file was added to the project: [```src/spline.h```](./src/spline.h). It is
 Based on the provided seed project, the path planning algorithm sits in [```src/main.cpp```](./src/main.cpp). The code can be separated in five different segments:
 
 |    | Code segment                                 | Code lines                          |
-| -- | -------------------------------------------- | ----------------------------------- |
+|---:|:---------------------------------------------|:-----------------------------------:|
 | 1. | Determine main car parameters                | [234-258](./src/main.cpp#L234-L258) |
 | 2. | Generate predictions from sensor fusion data | [264-313](./src/main.cpp#L264-L313) |
 | 3. | Determine best trajectory                    | [319-355](./src/main.cpp#L319-L355) |
