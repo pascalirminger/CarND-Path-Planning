@@ -3,9 +3,9 @@
 Udacity Self-Driving Car Engineer Nanodegree Program - Term 3, Project 1
 
 [//]: # (Image References)
-[5mi]: ./5mi.png "5 miles"
-[15mi]: ./15mi.png "15 miles"
-[20mi]: ./20mi.png "20 miles"
+[5mi]: ./images/5mi.png "5 miles"
+[15mi]: ./images/15mi.png "15 miles"
+[20mi]: ./images/20mi.png "20 miles"
 
 # [Rubric](https://review.udacity.com/#!/rubrics/1020/view) points
 
