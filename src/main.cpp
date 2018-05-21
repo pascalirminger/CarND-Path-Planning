@@ -471,6 +471,10 @@ int main()
 						next_y_vals.push_back(y_point);
 					}
 
+					/********************************************************************
+					** Generate new path
+					********************************************************************/
+
 					json msgJson;
 					msgJson["next_x"] = next_x_vals;
 					msgJson["next_y"] = next_y_vals;
