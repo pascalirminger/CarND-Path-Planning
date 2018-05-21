@@ -23,13 +23,17 @@ double rad2deg(double x) { return x * 180 / pi(); }
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
 // else the empty string "" will be returned.
-string hasData(string s) {
+string hasData(string s)
+{
   auto found_null = s.find("null");
   auto b1 = s.find_first_of("[");
   auto b2 = s.find_first_of("}");
-  if (found_null != string::npos) {
+  if (found_null != string::npos)
+	{
     return "";
-  } else if (b1 != string::npos && b2 != string::npos) {
+  }
+	else if (b1 != string::npos && b2 != string::npos)
+	{
     return s.substr(b1, b2 - b1 + 2);
   }
   return "";
@@ -37,7 +41,7 @@ string hasData(string s) {
 
 double distance(double x1, double y1, double x2, double y2)
 {
-	return sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+	return sqrt((x2-x1) * (x2-x1) + (y2-y1) * (y2-y1));
 }
 
 int ClosestWaypoint(double x, double y, const vector<double> &maps_x, const vector<double> &maps_y)
@@ -49,7 +53,7 @@ int ClosestWaypoint(double x, double y, const vector<double> &maps_x, const vect
 	{
 		double map_x = maps_x[i];
 		double map_y = maps_y[i];
-		double dist = distance(x,y,map_x,map_y);
+		double dist = distance(x, y, map_x, map_y);
 		if (dist < closestLen)
 		{
 			closestLen = dist;
@@ -62,17 +66,17 @@ int ClosestWaypoint(double x, double y, const vector<double> &maps_x, const vect
 
 int NextWaypoint(double x, double y, double theta, const vector<double> &maps_x, const vector<double> &maps_y)
 {
-	int closestWaypoint = ClosestWaypoint(x,y,maps_x,maps_y);
+	int closestWaypoint = ClosestWaypoint(x, y, maps_x, maps_y);
 
 	double map_x = maps_x[closestWaypoint];
 	double map_y = maps_y[closestWaypoint];
 
-	double heading = atan2((map_y-y),(map_x-x));
+	double heading = atan2((map_y-y), (map_x-x));
 
 	double angle = fabs(theta-heading);
-  angle = min(2*pi() - angle, angle);
+  angle = min(2 * pi() - angle, angle);
 
-  if (angle > pi()/4)
+  if (angle > pi() / 4)
   {
     closestWaypoint++;
 		if (closestWaypoint == maps_x.size())
@@ -87,33 +91,33 @@ int NextWaypoint(double x, double y, double theta, const vector<double> &maps_x,
 // Transform from Cartesian x,y coordinates to Frenet s,d coordinates
 vector<double> getFrenet(double x, double y, double theta, const vector<double> &maps_x, const vector<double> &maps_y)
 {
-	int next_wp = NextWaypoint(x,y, theta, maps_x,maps_y);
+	int next_wp = NextWaypoint(x, y, theta, maps_x, maps_y);
 
 	int prev_wp;
-	prev_wp = next_wp-1;
+	prev_wp = next_wp - 1;
 	if (next_wp == 0)
 	{
-		prev_wp  = maps_x.size()-1;
+		prev_wp  = maps_x.size() - 1;
 	}
 
-	double n_x = maps_x[next_wp]-maps_x[prev_wp];
-	double n_y = maps_y[next_wp]-maps_y[prev_wp];
+	double n_x = maps_x[next_wp] - maps_x[prev_wp];
+	double n_y = maps_y[next_wp] - maps_y[prev_wp];
 	double x_x = x - maps_x[prev_wp];
 	double x_y = y - maps_y[prev_wp];
 
 	// find the projection of x onto n
-	double proj_norm = (x_x*n_x+x_y*n_y)/(n_x*n_x+n_y*n_y);
-	double proj_x = proj_norm*n_x;
-	double proj_y = proj_norm*n_y;
+	double proj_norm = (x_x * n_x + x_y * n_y) / (n_x * n_x + n_y * n_y);
+	double proj_x = proj_norm * n_x;
+	double proj_y = proj_norm * n_y;
 
-	double frenet_d = distance(x_x,x_y,proj_x,proj_y);
+	double frenet_d = distance(x_x, x_y, proj_x, proj_y);
 
 	//see if d value is positive or negative by comparing it to a center point
 
-	double center_x = 1000-maps_x[prev_wp];
-	double center_y = 2000-maps_y[prev_wp];
-	double centerToPos = distance(center_x,center_y,x_x,x_y);
-	double centerToRef = distance(center_x,center_y,proj_x,proj_y);
+	double center_x = 1000 - maps_x[prev_wp];
+	double center_y = 2000 - maps_y[prev_wp];
+	double centerToPos = distance(center_x, center_y, x_x, x_y);
+	double centerToRef = distance(center_x, center_y, proj_x, proj_y);
 
 	if (centerToPos <= centerToRef)
 	{
@@ -124,13 +128,12 @@ vector<double> getFrenet(double x, double y, double theta, const vector<double> 
 	double frenet_s = 0;
 	for (int i = 0; i < prev_wp; i++)
 	{
-		frenet_s += distance(maps_x[i],maps_y[i],maps_x[i+1],maps_y[i+1]);
+		frenet_s += distance(maps_x[i], maps_y[i], maps_x[i+1], maps_y[i+1]);
 	}
 
 	frenet_s += distance(0,0,proj_x,proj_y);
 
-	return {frenet_s,frenet_d};
-
+	return { frenet_s, frenet_d };
 }
 
 // Transform from Frenet s,d coordinates to Cartesian x,y
@@ -158,10 +161,10 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s, const vec
 	double y = seg_y + d * sin(perp_heading);
 
 	return {x,y};
-
 }
 
-int main() {
+int main()
+{
   uWS::Hub h;
 
   // Load up map values for waypoint's x,y,s and d normalized normal vectors
@@ -179,7 +182,8 @@ int main() {
   ifstream in_map_(map_file_.c_str(), ifstream::in);
 
   string line;
-  while (getline(in_map_, line)) {
+  while (getline(in_map_, line))
+	{
   	istringstream iss(line);
   	double x;
   	double y;
@@ -204,25 +208,30 @@ int main() {
 	// Have a reference velocity to target
 	double ref_vel = 0.0; // mph
 
-  h.onMessage([&ref_vel, &map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy, &lane](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&ref_vel, &map_waypoints_x, &map_waypoints_y, &map_waypoints_s, &map_waypoints_dx, &map_waypoints_dy, &lane](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode)
+	{
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
     //auto sdata = string(data).substr(0, length);
     //cout << sdata << endl;
-    if (length && length > 2 && data[0] == '4' && data[1] == '2') {
-
+    if (length && length > 2 && data[0] == '4' && data[1] == '2')
+		{
       auto s = hasData(data);
 
-      if (s != "") {
+      if (s != "")
+			{
         auto j = json::parse(s);
         
         string event = j[0].get<string>();
         
-        if (event == "telemetry") {
-          // j[1] is the data JSON object
-          
-        	// Main car's localization Data
+        if (event == "telemetry")
+				{
+          /********************************************************************
+					** Determine main car parameters
+					********************************************************************/
+
+					// Main car's localization data; j[1] is the data JSON object
 					double car_x = j[1]["x"];
 					double car_y = j[1]["y"];
 					double car_s = j[1]["s"];
@@ -243,11 +252,14 @@ int main() {
 					// Get previous path size
 					int prev_size = previous_path_x.size();
 
-
 					if (prev_size > 0)
 					{
 						car_s = end_path_s;
 					}
+
+					/********************************************************************
+					** Generate predictions from sensor fusion data
+					********************************************************************/
 
 					bool car_ahead = false;
 					bool car_left = false;
@@ -300,8 +312,12 @@ int main() {
 						}
 					}
 
-					const double MAX_VEL = 49.5;
-					const double DELTA_VEL = .224;
+					/********************************************************************
+					** Determine best trajectory
+					********************************************************************/
+
+					const double MAX_VEL = 49.5; // mph
+					const double DELTA_VEL = .224; // mph
 
 					if (car_ahead)
 					{
@@ -338,6 +354,9 @@ int main() {
 						}
 					}
 
+					/********************************************************************
+					** Generate new path
+					********************************************************************/
 
 					// Create a list of widely spaced (x,y) waypoints, evenly spaced at 30m.
 					// Later we will interpolate these waypoints with a spline and fill it in with more points that control speed.
@@ -452,7 +471,6 @@ int main() {
 						next_y_vals.push_back(y_point);
 					}
 
-
 					json msgJson;
 					msgJson["next_x"] = next_x_vals;
 					msgJson["next_y"] = next_y_vals;
@@ -461,9 +479,10 @@ int main() {
 
 					//this_thread::sleep_for(chrono::milliseconds(1000));
 					ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
-          
         }
-      } else {
+      }
+			else
+			{
         // Manual driving
         std::string msg = "42[\"manual\",{}]";
         ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
@@ -474,29 +493,38 @@ int main() {
   // We don't need this since we're not using HTTP but if it's removed the
   // program
   // doesn't compile :-(
-  h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t) {
+  h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t)
+	{
     const std::string s = "<h1>Hello world!</h1>";
-    if (req.getUrl().valueLength == 1) {
+    if (req.getUrl().valueLength == 1)
+		{
       res->end(s.data(), s.length());
-    } else {
+    }
+		else
+		{
       // i guess this should be done more gracefully?
       res->end(nullptr, 0);
     }
   });
 
-  h.onConnection([&h](uWS::WebSocket<uWS::SERVER> ws, uWS::HttpRequest req) {
+  h.onConnection([&h](uWS::WebSocket<uWS::SERVER> ws, uWS::HttpRequest req)
+	{
     std::cout << "Connected!!!" << std::endl;
   });
 
-  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code, char *message, size_t length) {
+  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code, char *message, size_t length)
+	{
     ws.close();
     std::cout << "Disconnected" << std::endl;
   });
 
   int port = 4567;
-  if (h.listen(port)) {
+  if (h.listen(port))
+	{
     std::cout << "Listening to port " << port << std::endl;
-  } else {
+  }
+	else
+	{
     std::cerr << "Failed to listen to port" << std::endl;
     return -1;
   }
