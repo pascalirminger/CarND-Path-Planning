@@ -1,6 +1,8 @@
 # Path Planning Project
 
-Udacity Self-Driving Car Engineer Nanodegree Program - Term 3, Project 1
+**Udacity Self-Driving Car Engineer Nanodegree Program – Term 3, Project 1: Path Planning**
+
+This repository contains the code written to complete the first project in Term 3 of the [Udacity Self-Driving Car Engineer Nanodegree Program](https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd013). This project uses a path planning algorithm to drive a car around a highway simulation.
 
 [//]: # (Image References)
 [5mi]: ./images/5mi.png "5 miles"
